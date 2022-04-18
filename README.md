@@ -18,8 +18,11 @@ The platform provides:
 ### Activate a virtual environment
 
 > `python3 -m venv env1`
+
 > `cd env1`
+
 > `git clone https://github.com/matteorazzanelli/mongodb-project.git`
+
 > `cd mongodb-project`
 
 ### Install pre-requisities
