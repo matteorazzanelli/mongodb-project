@@ -1,0 +1,87 @@
+{% extends 'app/header.html' %}
+
+  {% block content %}
+
+  <!--Navbar-->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        {% if user.is_authenticated %}
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Welcome, {{user.username}}</a>
+        </li>
+
+        {% else %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Login</a>
+        </li>
+
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+
+  <!--CTA-->
+  <h1>Summary</h1>
+  <p> User : {{user}} </p>
+  <p> BTC balance : {{btc_balance}} </p>
+  <p> USD balance : {{usd_balance}} </p>
+  <p> Profit : {{profit}} </p>
+
+  <h2>New order</h2>
+  <form method="POST" class="post-form">{% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Place order</button>
+  </form>
+
+  <h2>Your OPEN orders</h2>
+  <table class="table p-4 bg-white shadow rounded-lg">
+    <thead>
+      <tr>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> # </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> Price ($/BTC) </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> BTC Quantity </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> Type </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> Date </th>
+      </tr>
+    </thead>
+    <tbody> {% for order in open_orders %} <tr class="text-gray-700">
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{forloop.counter}} </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.price}} $ </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.quantity}} </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.type}} </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.datetime}} </td>
+      </tr> {% endfor %} </tbody>
+  </table>
+
+  <h2>Your CLOSED orders</h2>
+  <table class="table p-4 bg-white shadow rounded-lg">
+    <thead>
+      <tr>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> # </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> Price ($/BTC) </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> BTC Quantity </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> Type </th>
+        <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-blue-600"> Date </th>
+      </tr>
+    </thead>
+    <tbody> {% for order in closed_orders %} <tr class="text-gray-700">
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{forloop.counter}} </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.price}} $ </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.quantity}} </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.type}} </td>
+        <td class="border-b-2 p-4 dark:border-dark-5"> {{order.datetime}} </td>
+      </tr> {% endfor %} </tbody>
+  </table>
+
+  {% endblock %}
