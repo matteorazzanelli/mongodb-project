@@ -41,7 +41,7 @@ def findBuyer(user, price, quantity):
 def updateWallet(buyer_wallet, seller_wallet, buyer_price, buyer_quantity, seller_price, seller_quantity):
   buyer_wallet.btc_balance += buyer_quantity
   buyer_wallet.usd_balance += buyer_quantity*(seller_price-buyer_price)
-  buyer_wallet.profit += buyer_quantity*(seller_price-buyer_price)
+  buyer_wallet.profit -= buyer_quantity*(seller_price-buyer_price)
   seller_wallet.btc_balance += (seller_quantity - buyer_quantity)
   seller_wallet.usd_balance += seller_price*seller_quantity
   seller_wallet.profit += seller_price*seller_quantity
@@ -53,25 +53,25 @@ def processOrder(form, request):
   type = form.cleaned_data["type"]
   price = form.cleaned_data["price"]
   quantity = form.cleaned_data["quantity"]
-  
+  # Find the corresponding wallet for user that has submitted the form
   wallet = Wallet.objects.filter(user=request.user).first()
   # Can buy ?
   if type == "buy" and canBuy(wallet, price, quantity):
+    # find a suitable seller
     [seller, seller_price, seller_quantity] = findSeller(request.user, price, quantity)
     # if a seller is found execute transaction and update wallet
     if seller is not None:
-      print(request.user, ' buy to ', seller)
       status = "executed"
+      # update seller and buyer wallet using the same function
       updateWallet(wallet, Wallet.objects.filter(user=seller).first(), price, quantity, seller_price, seller_quantity)
     else:
       status = "pending"
   # Can Sell ?
   elif type == "sell" and canSell(wallet, quantity):
-    print('sell')
+    # find a suitable buyer
     [buyer, buyer_price, buyer_quantity] = findBuyer(request.user, price, quantity)
     # if a buyer is found execute transaction and update wallet
     if buyer is not None:
-      print(request.user, ' sell to ', buyer)
       status = "executed"
       updateWallet(Wallet.objects.filter(user=buyer).first(), wallet, buyer_price, buyer_quantity, price, quantity)
     else:
@@ -79,7 +79,7 @@ def processOrder(form, request):
   else:
     messages.error(request, "Operation not allowed.")
     return redirect("app:homepage")
-  
+  # save the order
   order = form.save(commit=False)
   order.profile = request.user
   order.type = type
