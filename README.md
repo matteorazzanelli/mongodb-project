@@ -31,12 +31,14 @@ The platform provides:
 
 > `pip install -r requirements.txt -v`
 
-> `python manage.py migrate` 
+> `python manage.py makemigrations` 
 
-> `python manage.py runserver` 
+> `python manage.py migrate` 
 
 ### Start
 
+> `python manage.py runserver` 
+> 
 Next, open the following URL in your browser: 
 
 > `http://127.0.0.1:8000/`
