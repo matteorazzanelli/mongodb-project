@@ -21,6 +21,8 @@ The platform provides:
 
 > `cd env1`
 
+### Clone the project
+
 > `git clone https://github.com/matteorazzanelli/mongodb-project.git`
 
 > `cd mongodb-project`
