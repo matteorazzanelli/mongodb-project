@@ -12,18 +12,20 @@ def canBuy(wallet, price, quantity):
   if wallet.usd_balance < price * quantity:
     return False
   wallet.usd_balance -= price * quantity # to avoid short selling (vendite allo scoperto)
+  wallet.save()
   return True
 
 def canSell(wallet, quantity):
   if wallet.btc_balance < quantity:
     return False
   wallet.btc_balance -= quantity # to avoid short selling (vendite allo scoperto)
+  wallet.save()
   return True
 
 ###############
 def findSeller(user, price, quantity):
   # find the oldest, fifo approach
-  seller = Order.objects.exclude(profile=user).filter(status="pending", type="sell", price__lte=price, quantity__gte=quantity).order_by('datetime').first()
+  seller = Order.objects.exclude(profile=user).filter(status="pending", type="sell", price__lte=price).order_by('datetime').first()
   if seller is None:
     return None, None, None
   else:
@@ -31,7 +33,7 @@ def findSeller(user, price, quantity):
 
 def findBuyer(user, price, quantity):
   # find the oldest, fifo approach
-  buyer = Order.objects.exclude(profile=user).filter(status="pending", type="buy", price__gte=price, quantity__lte=quantity).order_by('datetime').first()
+  buyer = Order.objects.exclude(profile=user).filter(status="pending", type="buy", price__gte=price).order_by('datetime').first()
   if buyer is None:
     return None, None, None
   else:
